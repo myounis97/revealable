@@ -7,7 +7,7 @@ plugins {
 apply(from = "../buildCompose.gradle")
 
 ext {
-    set("PUBLISH_GROUP_ID", "mo.younis.compose")
+    set("PUBLISH_GROUP_ID", "io.github.myounis97")
     set("PUBLISH_ARTIFACT_ID", "revealable")
     set("PUBLISH_VERSION", "1.0.0")
 }
