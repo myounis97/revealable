@@ -1,4 +1,4 @@
-package mo.younis.compose.revealable
+package mo.younis.compose.sample
 
 import java.lang.ref.SoftReference
 import java.lang.ref.WeakReference
