@@ -23,6 +23,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import mo.younis.revealable.compose.Revealable
+import mo.younis.revealable.compose.RevealableState
+import mo.younis.revealable.compose.rememberRevealableState
 import mo.younis.revealable.sample.ui.theme.RevealSwipeTheme
 
 class MainActivity : ComponentActivity() {
@@ -48,7 +51,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun List(modifier: Modifier) {
-    val state = mo.younis.revealable.rememberRevealableState()
+    val state = rememberRevealableState()
 
     LazyColumn(
         modifier = modifier,
@@ -62,8 +65,8 @@ private fun List(modifier: Modifier) {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: mo.younis.revealable.RevealableState) {
-    mo.younis.revealable.Revealable(
+fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: RevealableState) {
+    Revealable(
         state = revealableState,
         modifier = modifier,
         startContent = {

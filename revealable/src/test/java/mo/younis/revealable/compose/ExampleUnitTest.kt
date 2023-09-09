@@ -1,4 +1,4 @@
-package mo.younis.revealable
+package mo.younis.revealable.compose
 
 import org.junit.Test
 

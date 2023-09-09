@@ -1,4 +1,4 @@
-package mo.younis.revealable
+package mo.younis.revealable.compose
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "RevealableSample"
-include(":app")
+rootProject.name = "Revealable"
+include(":sample")
 include(":revealable")

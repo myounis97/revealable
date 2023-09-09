@@ -7,6 +7,12 @@ android {
     namespace = "mo.younis.revealable.compose"
     compileSdk = 34
 
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
+
     defaultConfig {
         minSdk = 21
 
@@ -23,10 +29,12 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = "17"
     }
