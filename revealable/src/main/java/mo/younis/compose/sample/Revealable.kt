@@ -31,13 +31,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -110,11 +107,9 @@ fun rememberRevealableState(
 @Composable
 fun Revealable(
     state: RevealableState,
+    itemState: RevealableItemState,
     modifier: Modifier,
     enable: Boolean = true,
-    positionalThreshold: (totalDistance: Float) -> Float = { distance -> distance * 0.5f },
-    velocityThreshold: (Density) -> Float = { density -> with(density) { 150.dp.toPx() } },
-    confirmValueChange: (newValue: RevealableValue) -> Boolean = { true },
     startContent: @Composable () -> Unit = {},
     endContent: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
@@ -122,14 +117,7 @@ fun Revealable(
     var startContentSize by remember { mutableStateOf(IntSize.Zero) }
     var endContentSize by remember { mutableStateOf(IntSize.Zero) }
 
-    val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
-
-    val itemState = rememberRevealableItemState(
-        positionalThreshold = positionalThreshold,
-        velocityThreshold = { velocityThreshold(density) },
-        confirmValueChange = confirmValueChange,
-    )
 
     val dragStartProgress by remember {
         itemState.progressFor(RevealableValue.StartRevealed, layoutDirection.revealDirection)

@@ -1,9 +1,14 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package mo.younis.compose.sample
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,12 +22,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import mo.younis.compose.sample.ui.theme.RevealSwipeTheme
 
 class MainActivity : ComponentActivity() {
@@ -48,7 +56,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun List(modifier: Modifier) {
-    val state = rememberRevealableState()
+    val state = rememberRevealableState(
+        allowMultipleReveals = false,
+        coroutineScope = rememberCoroutineScope(),
+    )
 
     LazyColumn(
         modifier = modifier,
@@ -63,14 +74,26 @@ private fun List(modifier: Modifier) {
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: RevealableState) {
+    val density = LocalDensity.current
+
+    val itemState = rememberRevealableItemState(
+        positionalThreshold = { distance -> distance * 0.5f },
+        velocityThreshold = { with(density) { 150.dp.toPx() } },
+        confirmValueChange = { true },
+    )
+
+    val coroutineScope = rememberCoroutineScope()
+
     Revealable(
         state = revealableState,
+        itemState = itemState,
         modifier = modifier,
         startContent = {
             Box(
                 modifier = Modifier
                     .background(Color.Cyan)
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
+                    .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.Initial) } },
                 contentAlignment = Alignment.Center,
             ) {
                 Text(text = "Hello")
@@ -78,7 +101,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
             Box(
                 modifier = Modifier
                     .background(Color.Green)
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
+                    .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.EndRevealed) } },
                 contentAlignment = Alignment.Center,
             ) {
                 Text(text = "HelloHello")
@@ -112,7 +136,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
             Box(
                 modifier = Modifier
                     .background(Color.Magenta)
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
+                    .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.Initial) } },
                 contentAlignment = Alignment.Center,
             ) {
                 Text(text = "HelloHello")
@@ -120,7 +145,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
             Box(
                 modifier = Modifier
                     .background(Color.Blue)
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
+                    .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.StartRevealed) } },
                 contentAlignment = Alignment.Center,
             ) {
                 Text(text = "HelloHelloHello")
