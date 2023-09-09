@@ -47,7 +47,7 @@ Here's a quick guide on how to use the library in your Compose project:
     )
    ```
 
-3**Compose your UI**:
+3. **Compose your UI**:
    ```kotlin
     val coroutineScope = rememberCoroutineScope()
 
