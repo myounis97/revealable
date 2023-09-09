@@ -1,4 +1,4 @@
-package mo.younis.revealable.sample
+package mo.younis.compose.revealable
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -23,10 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import mo.younis.revealable.compose.Revealable
-import mo.younis.revealable.compose.RevealableState
-import mo.younis.revealable.compose.rememberRevealableState
-import mo.younis.revealable.sample.ui.theme.RevealSwipeTheme
+import mo.younis.compose.revealable.ui.theme.RevealSwipeTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,11 +33,11 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                         List(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
                         )
                     }
                 }
@@ -56,7 +53,7 @@ private fun List(modifier: Modifier) {
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(vertical = 32.dp)
+        contentPadding = PaddingValues(vertical = 32.dp),
     ) {
         items(30) { index ->
             Greeting(name = "Android $index", revealableState = state)
@@ -74,7 +71,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
                 modifier = Modifier
                     .background(Color.Cyan)
                     .fillMaxHeight(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(text = "Hello")
             }
@@ -82,7 +79,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
                 modifier = Modifier
                     .background(Color.Green)
                     .fillMaxHeight(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(text = "HelloHello")
             }
@@ -90,7 +87,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
                 modifier = Modifier
                     .background(Color.Yellow)
                     .fillMaxHeight(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(text = "HelloHelloHello")
             }
@@ -98,7 +95,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
                 modifier = Modifier
                     .background(Color.LightGray)
                     .fillMaxHeight(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(text = "HelloHelloHelloHello")
             }
@@ -108,7 +105,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
                 modifier = Modifier
                     .background(Color.Red)
                     .fillMaxHeight(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(text = "Hello")
             }
@@ -116,7 +113,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
                 modifier = Modifier
                     .background(Color.Magenta)
                     .fillMaxHeight(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(text = "HelloHello")
             }
@@ -124,20 +121,20 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
                 modifier = Modifier
                     .background(Color.Blue)
                     .fillMaxHeight(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(text = "HelloHelloHello")
             }
-        }
+        },
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.primary)
-                .padding(32.dp)
+                .padding(32.dp),
         ) {
             Text(
-                text = "Hello $name!"
+                text = "Hello $name!",
             )
         }
     }

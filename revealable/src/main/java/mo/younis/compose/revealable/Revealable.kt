@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package mo.younis.revealable.compose
+package mo.younis.compose.revealable
 
 import android.util.Log
 import androidx.compose.animation.core.AnimationSpec
@@ -48,7 +48,7 @@ import kotlin.math.roundToInt
 @Stable
 class RevealableState(
     private val allowMultipleReveals: Boolean,
-    private val coroutineScope: CoroutineScope
+    private val coroutineScope: CoroutineScope,
 ) {
     private var revealedItem by weakReference<RevealableItemState?>()
 
@@ -65,14 +65,14 @@ typealias RevealableItemState = AnchoredDraggableState<RevealableValue>
 @Stable
 private enum class RevealableDirection {
     Start,
-    End
+    End,
 }
 
 @Stable
 enum class RevealableValue {
     Initial,
     StartRevealed,
-    EndRevealed
+    EndRevealed,
 }
 
 @Composable
@@ -81,28 +81,28 @@ fun rememberRevealableItemState(
     positionalThreshold: (totalDistance: Float) -> Float,
     velocityThreshold: () -> Float,
     animationSpec: AnimationSpec<Float> = spring(),
-    confirmValueChange: (newValue: RevealableValue) -> Boolean = { true }
+    confirmValueChange: (newValue: RevealableValue) -> Boolean = { true },
 ): RevealableItemState = rememberSaveable(
     saver = RevealableItemState.Saver(
         positionalThreshold = positionalThreshold,
         velocityThreshold = velocityThreshold,
         animationSpec = animationSpec,
-        confirmValueChange = confirmValueChange
-    )
+        confirmValueChange = confirmValueChange,
+    ),
 ) {
     RevealableItemState(
         initialValue = initialValue,
         positionalThreshold = positionalThreshold,
         velocityThreshold = velocityThreshold,
         animationSpec = animationSpec,
-        confirmValueChange = confirmValueChange
+        confirmValueChange = confirmValueChange,
     )
 }
 
 @Composable
 fun rememberRevealableState(
     allowMultipleReveals: Boolean = false,
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) = remember {
     RevealableState(allowMultipleReveals = allowMultipleReveals, coroutineScope = coroutineScope)
 }
@@ -128,7 +128,7 @@ fun Revealable(
     val itemState = rememberRevealableItemState(
         positionalThreshold = positionalThreshold,
         velocityThreshold = { velocityThreshold(density) },
-        confirmValueChange = confirmValueChange
+        confirmValueChange = confirmValueChange,
     )
 
     val dragStartProgress by remember {
@@ -147,9 +147,9 @@ fun Revealable(
                         newAnchors = makeAnchors(
                             endContentSize = endContentSize,
                             startContentSize = startContentSize,
-                            layoutDirection = layoutDirection
+                            layoutDirection = layoutDirection,
                         ),
-                        newTarget = itemState.targetValue
+                        newTarget = itemState.targetValue,
                     )
                 }
         }
@@ -161,9 +161,9 @@ fun Revealable(
                         newAnchors = makeAnchors(
                             endContentSize = endContentSize,
                             startContentSize = startContentSize,
-                            layoutDirection = layoutDirection
+                            layoutDirection = layoutDirection,
                         ),
-                        newTarget = itemState.targetValue
+                        newTarget = itemState.targetValue,
                     )
                 }
         }
@@ -171,39 +171,45 @@ fun Revealable(
         launch {
             snapshotFlow { itemState.targetValue }
                 .collectLatest { value ->
-                    if (value != RevealableValue.Initial)
+                    if (value != RevealableValue.Initial) {
                         state.onItemRevealed(itemState)
+                    }
                 }
         }
     }
 
     val startProgressProvider = remember {
-        { dragStartProgress }
+        {
+            dragStartProgress
+        }
     }
 
     val endProgressProvider = remember {
-        { dragEndProgress }
+        {
+            dragEndProgress
+        }
     }
 
     Box(
         modifier = Modifier.then(
-            if (enable)
+            if (enable) {
                 Modifier.revealableItem(itemState)
-            else
+            } else {
                 Modifier
-        )
+            },
+        ),
     ) {
         Box(
-            modifier = Modifier.matchParentSize()
+            modifier = Modifier.matchParentSize(),
         ) {
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .onSizeChanged { startContentSize = it }
+                    .onSizeChanged { startContentSize = it },
             ) {
                 RevealableRow(
                     progressProvider = startProgressProvider,
-                    direction = RevealableDirection.Start
+                    direction = RevealableDirection.Start,
                 ) {
                     startContent()
                 }
@@ -212,11 +218,11 @@ fun Revealable(
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
-                    .onSizeChanged { endContentSize = it }
+                    .onSizeChanged { endContentSize = it },
             ) {
                 RevealableRow(
                     progressProvider = endProgressProvider,
-                    direction = RevealableDirection.End
+                    direction = RevealableDirection.End,
                 ) {
                     endContent()
                 }
@@ -228,7 +234,7 @@ fun Revealable(
                 val x = itemState.offset.toInt()
                     .times(if (layoutDirection == LayoutDirection.Ltr) 1 else -1)
                 IntOffset(x = x, y = 0)
-            }
+            },
         ) {
             content()
         }
@@ -238,7 +244,7 @@ fun Revealable(
 private fun makeAnchors(
     startContentSize: IntSize,
     endContentSize: IntSize,
-    layoutDirection: LayoutDirection
+    layoutDirection: LayoutDirection,
 ) = DraggableAnchors {
     RevealableValue.EndRevealed at endContentSize.width.toFloat()
         .times(if (layoutDirection == LayoutDirection.Ltr) -1 else 1)
@@ -259,7 +265,7 @@ fun Modifier.revealableItem(
 
 private fun RevealableItemState.progressFor(
     value: RevealableValue,
-    direction: RevealableDirection
+    direction: RevealableDirection,
 ) = derivedStateOf(structuralEqualityPolicy()) {
     val mOffset = if (direction == RevealableDirection.Start) offset else -offset
 
@@ -275,13 +281,16 @@ private fun RevealableItemState.progressFor(
 
     if (position.isNaN().not() && mOffset.isNaN().not()) {
         var progress = mOffset.absoluteValue / position.absoluteValue
-        progress = if (progress.isNaN())
+        progress = if (progress.isNaN()) {
             0f
-        else
+        } else {
             progress.coerceIn(0f, 1f)
+        }
         Log.d("RevealSwipe", "progressFor: $value: $progress")
         progress
-    } else 0f
+    } else {
+        0f
+    }
 }
 
 @Composable
@@ -295,13 +304,13 @@ private fun RevealableRow(
     Layout(
         measurePolicy = measurePolicy,
         content = content,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
 private fun revealableRowMeasurePolicy(
     progressProvider: () -> Float,
-    direction: RevealableDirection
+    direction: RevealableDirection,
 ) = MeasurePolicy { measurables, constraints ->
     val placeables = measurables.map { measurable -> measurable.measure(constraints) }
     val height = placeables.maxOf { it.height }
@@ -316,10 +325,13 @@ private fun revealableRowMeasurePolicy(
 
             val previousPlaceableWidth = placeables.subList(0, index).sumOf { it.width }
 
-            val nextPlaceableWidth = if (index != placeables.lastIndex)
+            val nextPlaceableWidth = if (index != placeables.lastIndex) {
                 placeables
                     .subList(min(placeables.lastIndex, index + 1), placeables.size)
-                    .sumOf { it.width } else 0
+                    .sumOf { it.width }
+            } else {
+                0
+            }
 
             val progress = progressProvider()
 
@@ -336,7 +348,7 @@ private fun revealableRowMeasurePolicy(
             placeable.placeRelative(
                 x = xPos,
                 y = 0,
-                zIndex = zIndex
+                zIndex = zIndex,
             )
         }
     }

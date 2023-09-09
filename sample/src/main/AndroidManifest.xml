@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Revealable"
         tools:targetApi="33">
         <activity
-            android:name=".MainActivity"
+            android:name="mo.younis.compose.revealable.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Revealable">

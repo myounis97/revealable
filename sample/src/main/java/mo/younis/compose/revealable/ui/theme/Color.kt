@@ -1,4 +1,4 @@
-package mo.younis.revealable.sample.ui.theme
+package mo.younis.compose.revealable.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

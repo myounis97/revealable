@@ -1,20 +1,25 @@
 plugins {
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id("kotlin-android")
+    alias(libs.plugins.spotless)
 }
 
-android {
-    namespace = "mo.younis.revealable.compose"
-    compileSdk = 34
+apply(from = "../buildCompose.gradle")
 
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-        }
-    }
+ext {
+    set("PUBLISH_GROUP_ID", "mo.younis.compose")
+    set("PUBLISH_ARTIFACT_ID", "revealable")
+    set("PUBLISH_VERSION", "1.0.0")
+}
+
+apply(from = "../publish.gradle")
+
+android {
+    namespace = "mo.younis.compose.revealable"
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 21
+        minSdk = libs.versions.minSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -25,9 +30,13 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
+    }
+
+    buildFeatures {
+        buildConfig = false
     }
 
     compileOptions {
@@ -41,10 +50,5 @@ android {
 }
 
 dependencies {
-    implementation(platform("androidx.compose:compose-bom:2023.09.00"))
-    implementation("androidx.compose.foundation:foundation:1.6.0-alpha05")
-    implementation("androidx.compose.ui:ui:1.6.0-alpha05")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
+    implementation(libs.kotlin.stdlib.jdk8)
 }

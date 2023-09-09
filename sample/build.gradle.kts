@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "mo.younis.revealable.sample"
+    namespace = "mo.younis.compose.revealable"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "mo.younis.revealable.sample"
+        applicationId = "mo.younis.compose.revealable"
         minSdk = 21
         targetSdk = 33
         versionCode = 1
@@ -25,7 +25,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
