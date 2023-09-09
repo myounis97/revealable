@@ -1,4 +1,4 @@
-package mo.younis.compose.revealable.ui.theme
+package mo.younis.compose.sample.ui.theme
 
 import android.app.Activity
 import android.os.Build

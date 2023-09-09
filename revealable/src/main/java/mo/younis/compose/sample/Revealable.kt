@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package mo.younis.compose.revealable
+package mo.younis.compose.sample
 
 import android.util.Log
 import androidx.compose.animation.core.AnimationSpec

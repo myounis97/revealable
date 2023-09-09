@@ -1,4 +1,4 @@
-package mo.younis.compose.revealable
+package mo.younis.compose.sample
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import mo.younis.compose.revealable.ui.theme.RevealSwipeTheme
+import mo.younis.compose.sample.ui.theme.RevealSwipeTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
