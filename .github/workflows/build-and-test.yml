@@ -37,6 +37,8 @@ jobs:
         with:
           java-version: 17
           distribution: 'zulu'
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
       - name: Build
         run: ./gradlew assembleRelease
 
@@ -51,6 +53,8 @@ jobs:
         with:
           java-version: 17
           distribution: 'zulu'
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
       - name: Unit tests
         run: ./gradlew testDebug --stacktrace
 
