@@ -44,8 +44,8 @@ jobs:
             exit 1
           fi
 
-#      - name: Make gradlew executable
-#        run: chmod +x ./gradlew
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 #
 #        # Builds the release artifacts of the library
 #      - name: Release build
