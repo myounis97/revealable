@@ -120,14 +120,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
             ) {
                 Text(text = "HelloHelloHello")
             }
-            Box(
-                modifier = Modifier
-                    .background(Color.LightGray)
-                    .fillMaxHeight(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(text = "HelloHelloHelloHello")
-            }
         },
         endContent = {
             Box(
