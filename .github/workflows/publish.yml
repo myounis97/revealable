@@ -25,18 +25,35 @@ jobs:
           SIGNING_SECRET_KEY_RING_FILE: ${{ secrets.SIGNING_SECRET_KEY_RING_FILE }}
         run: |
           git fetch --unshallow
+
+          # Print the values of the environment variables for debugging
+          echo "GPG_KEY_CONTENTS: $GPG_KEY_CONTENTS"
+          echo "SIGNING_SECRET_KEY_RING_FILE: $SIGNING_SECRET_KEY_RING_FILE"
+
+          # Ensure the directory where the output file is supposed to be exists
+          mkdir -p "$(dirname "$SIGNING_SECRET_KEY_RING_FILE")"
+
+          # Decode and save the GPG key
           echo "$GPG_KEY_CONTENTS" | base64 -d > "$SIGNING_SECRET_KEY_RING_FILE"
 
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
+          # Check if the file exists after decoding
+          if [ -f "$SIGNING_SECRET_KEY_RING_FILE" ]; then
+            echo "GPG key saved successfully."
+          else
+            echo "Error: GPG key file not found at $SIGNING_SECRET_KEY_RING_FILE"
+            exit 1
+          fi
 
-        # Builds the release artifacts of the library
-      - name: Release build
-        run: ./gradlew assembleRelease
-
-        # Generates other artifacts
-      - name: Source jar and dokka
-        run: ./gradlew androidSourcesJar
+#      - name: Make gradlew executable
+#        run: chmod +x ./gradlew
+#
+#        # Builds the release artifacts of the library
+#      - name: Release build
+#        run: ./gradlew assembleRelease
+#
+#        # Generates other artifacts
+#      - name: Source jar and dokka
+#        run: ./gradlew androidSourcesJar
 
         # Runs upload, and then closes & releases the repository
       - name: Publish to MavenCentral
