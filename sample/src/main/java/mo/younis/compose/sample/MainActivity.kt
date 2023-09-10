@@ -12,6 +12,7 @@ import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -98,27 +100,42 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
                 modifier = Modifier
                     .background(Color.Cyan)
                     .fillMaxHeight()
+                    .aspectRatio(1f)
                     .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.Initial) } },
                 contentAlignment = Alignment.Center,
             ) {
-                Text(text = "Hello")
+                Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    text = "Hello",
+                    textAlign = TextAlign.Center
+                )
             }
             Box(
                 modifier = Modifier
                     .background(Color.Green)
                     .fillMaxHeight()
+                    .aspectRatio(1f)
                     .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.EndRevealed) } },
                 contentAlignment = Alignment.Center,
             ) {
-                Text(text = "HelloHello")
+                Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    text = "HelloHello",
+                    textAlign = TextAlign.Center
+                )
             }
             Box(
                 modifier = Modifier
                     .background(Color.Yellow)
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
+                    .aspectRatio(1f),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(text = "HelloHelloHello")
+                Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    text = "HelloHelloHello",
+                    textAlign = TextAlign.Center
+                )
             }
         },
         endContent = {
@@ -128,7 +145,11 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
                     .fillMaxHeight(),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(text = "Hello")
+                Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    text = "Hello",
+                    textAlign = TextAlign.Center
+                )
             }
             Box(
                 modifier = Modifier
@@ -137,7 +158,11 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
                     .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.Initial) } },
                 contentAlignment = Alignment.Center,
             ) {
-                Text(text = "HelloHello")
+                Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    text = "HelloHello",
+                    textAlign = TextAlign.Center
+                )
             }
             Box(
                 modifier = Modifier
@@ -146,7 +171,11 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
                     .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.StartRevealed) } },
                 contentAlignment = Alignment.Center,
             ) {
-                Text(text = "HelloHelloHello")
+                Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    text = "HelloHelloHello",
+                    textAlign = TextAlign.Center
+                )
             }
         },
     ) {
