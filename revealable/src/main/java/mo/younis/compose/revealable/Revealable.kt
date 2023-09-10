@@ -1,8 +1,7 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package mo.younis.compose.sample
+package mo.younis.compose.revealable
 
-import android.util.Log
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -274,7 +273,6 @@ private fun RevealableItemState.progressFor(
         } else {
             progress.coerceIn(0f, 1f)
         }
-        Log.d("RevealSwipe", "progressFor: $value: $progress")
         progress
     } else {
         0f

@@ -31,6 +31,11 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import mo.younis.compose.revealable.Revealable
+import mo.younis.compose.revealable.RevealableState
+import mo.younis.compose.revealable.RevealableValue
+import mo.younis.compose.revealable.rememberRevealableItemState
+import mo.younis.compose.revealable.rememberRevealableState
 import mo.younis.compose.sample.ui.theme.RevealSwipeTheme
 
 class MainActivity : ComponentActivity() {
