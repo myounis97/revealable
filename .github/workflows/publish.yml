@@ -27,6 +27,9 @@ jobs:
           git fetch --unshallow
           echo "$GPG_KEY_CONTENTS" | base64 -d > "$SIGNING_SECRET_KEY_RING_FILE"
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
         # Builds the release artifacts of the library
       - name: Release build
         run: ./gradlew assembleRelease
