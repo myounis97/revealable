@@ -110,7 +110,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
                     Text(
                         modifier = Modifier.padding(horizontal = 4.dp),
                         text = "Add",
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
                 }
             }
@@ -127,7 +127,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
                     Text(
                         modifier = Modifier.padding(horizontal = 4.dp),
                         text = "Delete",
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
                 }
             }
@@ -146,7 +146,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
                     Text(
                         modifier = Modifier.padding(horizontal = 4.dp),
                         text = "Archive",
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
                 }
             }
