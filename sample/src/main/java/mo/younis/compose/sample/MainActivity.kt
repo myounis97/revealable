@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -18,6 +19,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Archive
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -45,7 +51,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                         List(
                             modifier = Modifier.fillMaxSize(),
                         )
@@ -93,84 +99,56 @@ fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: Revea
         startContent = {
             Box(
                 modifier = Modifier
-                    .background(Color.Cyan)
+                    .background(Color.LightGray)
                     .fillMaxHeight()
                     .aspectRatio(1f)
                     .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.Initial) } },
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    text = "Hello",
-                    textAlign = TextAlign.Center
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                    Text(
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        text = "Add",
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
             Box(
                 modifier = Modifier
-                    .background(Color.Green)
+                    .background(Color.Red)
                     .fillMaxHeight()
                     .aspectRatio(1f)
                     .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.EndRevealed) } },
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    text = "HelloHello",
-                    textAlign = TextAlign.Center
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .background(Color.Yellow)
-                    .fillMaxHeight()
-                    .aspectRatio(1f),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    text = "HelloHelloHello",
-                    textAlign = TextAlign.Center
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+                    Text(
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        text = "Delete",
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         },
         endContent = {
             Box(
                 modifier = Modifier
-                    .background(Color.Red)
-                    .fillMaxHeight(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    text = "Hello",
-                    textAlign = TextAlign.Center
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .background(Color.Magenta)
+                    .background(Color.Cyan)
                     .fillMaxHeight()
-                    .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.Initial) } },
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    text = "HelloHello",
-                    textAlign = TextAlign.Center
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .background(Color.Blue)
-                    .fillMaxHeight()
+                    .aspectRatio(1f)
                     .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.StartRevealed) } },
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    text = "HelloHelloHello",
-                    textAlign = TextAlign.Center
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(imageVector = Icons.Outlined.Archive, contentDescription = null)
+                    Text(
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        text = "Archive",
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         },
     ) {

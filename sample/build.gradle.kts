@@ -62,4 +62,6 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3.material3)
+    implementation(libs.compose.material.material)
+    implementation(libs.compose.material.material.icons.extended)
 }
