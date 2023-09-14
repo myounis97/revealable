@@ -91,6 +91,10 @@ Here's a quick guide on how to use the library in your Compose project:
    }
    ```
 
+## Preview
+
+![Revealable](https://github.com/myounis97/revealable/blob/main/art/revealable.gif)
+
 ## Sample
 
 Check out the [Sample App](sample/) included in this repository to see the Revealable Compose Library in action.
