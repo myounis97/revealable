@@ -1,7 +1,8 @@
-@file:OptIn(ExperimentalFoundationApi::class)
+@file:OptIn(ExperimentalFoundationApi::class, ExperimentalCoroutinesApi::class)
 
 package mo.younis.compose.sample
 
+import android.util.Log
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -10,10 +11,12 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
+import androidx.compose.foundation.gestures.snapTo
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
@@ -35,7 +38,13 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.min
@@ -46,13 +55,29 @@ class RevealableState(
     private val allowMultipleReveals: Boolean,
     private val coroutineScope: CoroutineScope,
 ) {
-    private var revealedItem by weakReference<RevealableItemState?>()
+    private var items = MutableStateFlow(setOf<RevealableItemState>())
 
-    internal fun onItemRevealed(itemState: RevealableItemState) {
-        if (allowMultipleReveals) return
-        if (revealedItem == itemState) return
-        revealedItem?.let { coroutineScope.launch { it.animateTo(RevealableValue.Initial) } }
-        revealedItem = itemState
+    fun addItemState(itemState: RevealableItemState) {
+        items.update {
+            it.toMutableSet().apply { add(itemState) }
+        }
+    }
+
+    fun removeItemState(itemState: RevealableItemState) {
+        items.update {
+            it.toMutableSet().apply { remove(itemState) }
+        }
+    }
+
+    fun onItemExpanded(itemState: RevealableItemState) {
+        Log.d("RevealableState", "onItemExpanded: $itemState")
+        coroutineScope.launch {
+            items.value
+                .filter { it !== itemState }
+                .forEach {
+                    it.animateTo(RevealableValue.Initial)
+                }
+        }
     }
 }
 
@@ -126,7 +151,7 @@ fun Revealable(
         itemState.progressFor(RevealableValue.EndRevealed, layoutDirection.revealDirection)
     }
 
-    LaunchedEffect(itemState) {
+    LaunchedEffect(itemState, state) {
         launch {
             snapshotFlow { startContentSize }
                 .collectLatest {
@@ -156,12 +181,21 @@ fun Revealable(
         }
 
         launch {
-            snapshotFlow { itemState.targetValue }
+            snapshotFlow { itemState.currentValue }
                 .collectLatest { value ->
                     if (value != RevealableValue.Initial) {
-                        state.onItemRevealed(itemState)
+                        if (isActive)
+                            state.onItemExpanded(itemState)
                     }
                 }
+        }
+    }
+
+    DisposableEffect(itemState, state) {
+        state.addItemState(itemState)
+
+        onDispose {
+            state.removeItemState(itemState)
         }
     }
 
