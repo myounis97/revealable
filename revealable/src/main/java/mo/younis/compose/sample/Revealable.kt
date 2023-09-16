@@ -131,6 +131,7 @@ fun Revealable(
                                 startContentSize = startContentSize,
                                 layoutDirection = layoutDirection,
                             ),
+                            newTarget = state.targetValue
                         )
                     },
             ) {
@@ -153,6 +154,7 @@ fun Revealable(
                                 startContentSize = startContentSize,
                                 layoutDirection = layoutDirection,
                             ),
+                            newTarget = state.targetValue
                         )
                     },
             ) {
