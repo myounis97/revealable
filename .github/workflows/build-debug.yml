@@ -1,7 +1,8 @@
-name: Build and test
+name: Build & Test Debug
 
 on:
   pull_request:
+  push:
     paths-ignore:
       - 'README.md'
     branches:
