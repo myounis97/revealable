@@ -1,4 +1,4 @@
-name: Build and test
+name: Build & Test Debug
 
 on:
   pull_request:
