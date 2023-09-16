@@ -29,7 +29,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +45,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import mo.younis.compose.sample.ui.theme.RevealSwipeTheme
 
@@ -64,10 +72,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun List(modifier: Modifier) {
-    val state = rememberRevealableState(
-        allowMultipleReveals = false,
-        coroutineScope = rememberCoroutineScope(),
-    )
+    var expandedIndex by remember { mutableStateOf(-1) }
 
     LazyColumn(
         modifier = modifier,
@@ -75,80 +80,105 @@ private fun List(modifier: Modifier) {
         contentPadding = PaddingValues(vertical = 32.dp),
     ) {
         items(30) { index ->
-            Greeting(name = "Android $index", revealableState = state)
+            Greeting(
+                name = "Android $index",
+                index = index,
+                expandedIndex = expandedIndex,
+                onExpanded = { expandedIndex = index },
+            )
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier, revealableState: RevealableState) {
+fun Greeting(
+    name: String,
+    index: Int,
+    expandedIndex: Int,
+    modifier: Modifier = Modifier,
+    onExpanded: () -> Unit,
+) {
     val density = LocalDensity.current
 
-    val itemState = rememberRevealableItemState(
+    val state = rememberRevealableItemState(
         positionalThreshold = { distance -> distance * 0.5f },
         velocityThreshold = { with(density) { 150.dp.toPx() } },
         confirmValueChange = { true },
     )
 
+    val onExpandedUpdated by rememberUpdatedState(onExpanded)
+
+    LaunchedEffect(expandedIndex, index, state) {
+        if (expandedIndex != index && state.currentValue != RevealableValue.Initial) {
+            state.animateTo(RevealableValue.Initial)
+        }
+    }
+
+    LaunchedEffect(state) {
+        snapshotFlow { state.targetValue }
+            .collectLatest {
+                if (it != RevealableValue.Initial) {
+                    onExpandedUpdated()
+                }
+            }
+    }
+
     val coroutineScope = rememberCoroutineScope()
 
     Revealable(
-        state = revealableState,
-        itemState = itemState,
+        state = state,
         modifier = modifier,
         startContent = {
-            Box(
+            Column(
                 modifier = Modifier
                     .background(Color.LightGray)
                     .fillMaxHeight()
                     .aspectRatio(1f)
-                    .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.Initial) } },
-                contentAlignment = Alignment.Center,
+                    .clickable { coroutineScope.launch { state.animateTo(RevealableValue.Initial) } },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(imageVector = Icons.Filled.Add, contentDescription = null)
-                    Text(
-                        modifier = Modifier.padding(horizontal = 4.dp),
-                        text = "Add",
-                        textAlign = TextAlign.Center,
-                    )
-                }
+                Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    text = "Add",
+                    textAlign = TextAlign.Center,
+                )
             }
-            Box(
+
+            Column(
                 modifier = Modifier
                     .background(Color.Red)
                     .fillMaxHeight()
                     .aspectRatio(1f)
-                    .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.EndRevealed) } },
-                contentAlignment = Alignment.Center,
+                    .clickable { coroutineScope.launch { state.animateTo(RevealableValue.EndRevealed) } },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
-                    Text(
-                        modifier = Modifier.padding(horizontal = 4.dp),
-                        text = "Delete",
-                        textAlign = TextAlign.Center,
-                    )
-                }
+                Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+                Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    text = "Delete",
+                    textAlign = TextAlign.Center,
+                )
             }
         },
         endContent = {
-            Box(
+            Column(
                 modifier = Modifier
                     .background(Color.Cyan)
                     .fillMaxHeight()
                     .aspectRatio(1f)
-                    .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.StartRevealed) } },
-                contentAlignment = Alignment.Center,
+                    .clickable { coroutineScope.launch { state.animateTo(RevealableValue.StartRevealed) } },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(imageVector = Icons.Outlined.Archive, contentDescription = null)
-                    Text(
-                        modifier = Modifier.padding(horizontal = 4.dp),
-                        text = "Archive",
-                        textAlign = TextAlign.Center,
-                    )
-                }
+                Icon(imageVector = Icons.Outlined.Archive, contentDescription = null)
+                Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    text = "Archive",
+                    textAlign = TextAlign.Center,
+                )
             }
         },
     ) {

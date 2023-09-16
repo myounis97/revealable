@@ -2,7 +2,6 @@
 
 package mo.younis.compose.sample
 
-import android.util.Log
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -10,23 +9,17 @@ import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
-import androidx.compose.foundation.gestures.animateTo
-import androidx.compose.foundation.gestures.snapTo
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,51 +30,12 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-@Stable
-class RevealableState(
-    private val allowMultipleReveals: Boolean,
-    private val coroutineScope: CoroutineScope,
-) {
-    private var items = MutableStateFlow(setOf<RevealableItemState>())
-
-    fun addItemState(itemState: RevealableItemState) {
-        items.update {
-            it.toMutableSet().apply { add(itemState) }
-        }
-    }
-
-    fun removeItemState(itemState: RevealableItemState) {
-        items.update {
-            it.toMutableSet().apply { remove(itemState) }
-        }
-    }
-
-    fun onItemExpanded(itemState: RevealableItemState) {
-        Log.d("RevealableState", "onItemExpanded: $itemState")
-        coroutineScope.launch {
-            items.value
-                .filter { it !== itemState }
-                .forEach {
-                    it.animateTo(RevealableValue.Initial)
-                }
-        }
-    }
-}
-
-typealias RevealableItemState = AnchoredDraggableState<RevealableValue>
+typealias RevealableState = AnchoredDraggableState<RevealableValue>
 
 @Stable
 private enum class RevealableDirection {
@@ -103,15 +57,15 @@ fun rememberRevealableItemState(
     velocityThreshold: () -> Float,
     animationSpec: AnimationSpec<Float> = spring(),
     confirmValueChange: (newValue: RevealableValue) -> Boolean = { true },
-): RevealableItemState = rememberSaveable(
-    saver = RevealableItemState.Saver(
+): RevealableState = rememberSaveable(
+    saver = RevealableState.Saver(
         positionalThreshold = positionalThreshold,
         velocityThreshold = velocityThreshold,
         animationSpec = animationSpec,
         confirmValueChange = confirmValueChange,
     ),
 ) {
-    RevealableItemState(
+    RevealableState(
         initialValue = initialValue,
         positionalThreshold = positionalThreshold,
         velocityThreshold = velocityThreshold,
@@ -121,17 +75,8 @@ fun rememberRevealableItemState(
 }
 
 @Composable
-fun rememberRevealableState(
-    allowMultipleReveals: Boolean = false,
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
-) = remember {
-    RevealableState(allowMultipleReveals = allowMultipleReveals, coroutineScope = coroutineScope)
-}
-
-@Composable
 fun Revealable(
     state: RevealableState,
-    itemState: RevealableItemState,
     modifier: Modifier,
     enable: Boolean = true,
     startContent: @Composable () -> Unit = {},
@@ -144,59 +89,11 @@ fun Revealable(
     val layoutDirection = LocalLayoutDirection.current
 
     val dragStartProgress by remember {
-        itemState.progressFor(RevealableValue.StartRevealed, layoutDirection.revealDirection)
+        state.progressFor(RevealableValue.StartRevealed, layoutDirection.revealDirection)
     }
 
     val dragEndProgress by remember {
-        itemState.progressFor(RevealableValue.EndRevealed, layoutDirection.revealDirection)
-    }
-
-    LaunchedEffect(itemState, state) {
-        launch {
-            snapshotFlow { startContentSize }
-                .collectLatest {
-                    itemState.updateAnchors(
-                        newAnchors = makeAnchors(
-                            endContentSize = endContentSize,
-                            startContentSize = startContentSize,
-                            layoutDirection = layoutDirection,
-                        ),
-                        newTarget = itemState.targetValue,
-                    )
-                }
-        }
-
-        launch {
-            snapshotFlow { endContentSize }
-                .collectLatest {
-                    itemState.updateAnchors(
-                        newAnchors = makeAnchors(
-                            endContentSize = endContentSize,
-                            startContentSize = startContentSize,
-                            layoutDirection = layoutDirection,
-                        ),
-                        newTarget = itemState.targetValue,
-                    )
-                }
-        }
-
-        launch {
-            snapshotFlow { itemState.currentValue }
-                .collectLatest { value ->
-                    if (value != RevealableValue.Initial) {
-                        if (isActive)
-                            state.onItemExpanded(itemState)
-                    }
-                }
-        }
-    }
-
-    DisposableEffect(itemState, state) {
-        state.addItemState(itemState)
-
-        onDispose {
-            state.removeItemState(itemState)
-        }
+        state.progressFor(RevealableValue.EndRevealed, layoutDirection.revealDirection)
     }
 
     val startProgressProvider = remember {
@@ -214,7 +111,7 @@ fun Revealable(
     Box(
         modifier = Modifier.then(
             if (enable) {
-                Modifier.revealableItem(itemState)
+                Modifier.revealableItem(state)
             } else {
                 Modifier
             },
@@ -226,7 +123,16 @@ fun Revealable(
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .onSizeChanged { startContentSize = it },
+                    .onSizeChanged {
+                        startContentSize = it
+                        state.updateAnchors(
+                            newAnchors = makeAnchors(
+                                endContentSize = endContentSize,
+                                startContentSize = startContentSize,
+                                layoutDirection = layoutDirection,
+                            ),
+                        )
+                    },
             ) {
                 RevealableRow(
                     progressProvider = startProgressProvider,
@@ -239,7 +145,16 @@ fun Revealable(
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
-                    .onSizeChanged { endContentSize = it },
+                    .onSizeChanged {
+                        endContentSize = it
+                        state.updateAnchors(
+                            newAnchors = makeAnchors(
+                                endContentSize = endContentSize,
+                                startContentSize = startContentSize,
+                                layoutDirection = layoutDirection,
+                            ),
+                        )
+                    },
             ) {
                 RevealableRow(
                     progressProvider = endProgressProvider,
@@ -252,7 +167,7 @@ fun Revealable(
 
         Box(
             modifier = modifier.offset {
-                val x = itemState.offset.toInt()
+                val x = state.offset.toInt()
                     .times(if (layoutDirection == LayoutDirection.Ltr) 1 else -1)
                 IntOffset(x = x, y = 0)
             },
@@ -276,7 +191,7 @@ private fun makeAnchors(
 
 @Composable
 fun Modifier.revealableItem(
-    state: RevealableItemState,
+    state: RevealableState,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) = this then Modifier.anchoredDraggable(
     state = state,
@@ -284,7 +199,7 @@ fun Modifier.revealableItem(
     interactionSource = interactionSource,
 )
 
-private fun RevealableItemState.progressFor(
+private fun RevealableState.progressFor(
     value: RevealableValue,
     direction: RevealableDirection,
 ) = derivedStateOf(structuralEqualityPolicy()) {
