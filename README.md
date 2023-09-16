@@ -32,19 +32,30 @@ Here's a quick guide on how to use the library in your Compose project:
 
 1. **Initialize the `RevealableState`**:
    ```kotlin
-   val revealableState = rememberRevealableState(
-        allowMultipleReveals = false,
-        coroutineScope = rememberCoroutineScope(),
-    )
-   ```
-
-2. **Initialize the `RevealableItemState`**:
-   ```kotlin
-   val itemState = rememberRevealableItemState(
+   val state = rememberRevealableState(
         positionalThreshold = { distance -> distance * 0.5f },
         velocityThreshold = { with(density) { 150.dp.toPx() } },
         confirmValueChange = { true },
     )
+   ```
+2. **Single Expansion**:
+   ```kotlin
+   val onExpandedUpdated by rememberUpdatedState(onExpanded)
+
+    LaunchedEffect(expandedIndex, index, state) {
+        if (expandedIndex != index && state.currentValue != RevealableValue.Initial) {
+            state.animateTo(RevealableValue.Initial)
+        }
+    }
+
+    LaunchedEffect(state) {
+        snapshotFlow { state.targetValue }
+            .collectLatest {
+                if (it != RevealableValue.Initial) {
+                    onExpandedUpdated()
+                }
+            }
+    }
    ```
 
 3. **Compose your UI**:
@@ -52,29 +63,41 @@ Here's a quick guide on how to use the library in your Compose project:
     val coroutineScope = rememberCoroutineScope()
 
    Revealable(
-        state = revealableState,
-        itemState = itemState,
+        state = state,
         modifier = modifier,
         startContent = {
-            Box(
+             Column(
                 modifier = Modifier
-                    .background(Color.Cyan)
+                    .background(Color.LightGray)
                     .fillMaxHeight()
-                    .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.EndRevealed) } },
-                contentAlignment = Alignment.Center,
+                    .aspectRatio(1f)
+                    .clickable { coroutineScope.launch { state.animateTo(RevealableValue.EndRevealed) } },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Text(text = "Hello")
+                Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    text = "Add",
+                    textAlign = TextAlign.Center,
+                )
             }
         },
         endContent = {
-            Box(
-                modifier = Modifier
-                    .background(Color.Red)
-                    .fillMaxHeight()
-                    .clickable { coroutineScope.launch { itemState.animateTo(RevealableValue.StartRevealed) } },
-                contentAlignment = Alignment.Center,
+            Column(modifier = Modifier
+                .background(Color.Cyan)
+                .fillMaxHeight()
+                .aspectRatio(1f)
+                .clickable { coroutineScope.launch { state.animateTo(RevealableValue.StartRevealed) } },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Text(text = "Hello")
+                Icon(imageVector = Icons.Outlined.Archive, contentDescription = null)
+                Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    text = "Archive",
+                    textAlign = TextAlign.Center,
+                )
             }
         },
    ) {
