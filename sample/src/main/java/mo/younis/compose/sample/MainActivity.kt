@@ -109,7 +109,10 @@ fun Greeting(
     val onExpandedUpdated by rememberUpdatedState(onExpanded)
 
     LaunchedEffect(expandedIndex, index, state) {
-        if (expandedIndex != index && state.currentValue != RevealableValue.Initial) {
+        val expanded = state.currentValue != RevealableValue.Initial ||
+                state.targetValue != RevealableValue.Initial
+
+        if (expandedIndex != index && expanded) {
             state.animateTo(RevealableValue.Initial)
         }
     }
