@@ -2,7 +2,6 @@ name: Spotless
 
 on:
   pull_request:
-  push:
     paths-ignore:
       - 'README.md'
     branches:
