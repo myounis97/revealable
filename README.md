@@ -32,7 +32,7 @@ Here's a quick guide on how to use the library in your Compose project:
 
 1. **Initialize the `RevealableState`**:
    ```kotlin
-   val state = rememberRevealableState(
+   val state = rememberRevealableItemState(
         positionalThreshold = { distance -> distance * 0.5f },
         velocityThreshold = { with(density) { 150.dp.toPx() } },
         confirmValueChange = { true },
