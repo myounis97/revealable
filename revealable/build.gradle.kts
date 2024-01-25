@@ -9,7 +9,7 @@ apply(from = "../buildCompose.gradle")
 ext {
     set("PUBLISH_GROUP_ID", "io.github.myounis97")
     set("PUBLISH_ARTIFACT_ID", "revealable")
-    set("PUBLISH_VERSION", "1.0.2")
+    set("PUBLISH_VERSION", "1.0.3")
 }
 
 apply(from = "../publish.gradle")

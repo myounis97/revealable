@@ -5,20 +5,19 @@ minSdk = "21"
 targetSdk = "33"
 ktlint = "0.50.0"
 
-composeBom = "2023.09.00"
-composeFoundation = "1.6.0-alpha05"
-composeCompiler = '1.5.3'
-gradle = "8.1.1"
-kotlin = "1.9.10"
+composeBom = "2024.01.00"
+composeCompiler = '1.5.8'
+gradle = "8.2.2"
+kotlin = "1.9.22"
 
-activityComposeVersion = "1.7.2"
-lifecycleRuntimeKtxVersion = "2.6.2"
+activityComposeVersion = "1.8.2"
+lifecycleRuntimeKtxVersion = "2.7.0"
 
 spotless = "6.21.0"
 
 [libraries]
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
-compose-foundation-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "composeFoundation" }
+compose-foundation-foundation = { module = "androidx.compose.foundation:foundation" }
 compose-material3-material3 = { module = "androidx.compose.material3:material3" }
 compose-material-material = { module = "androidx.compose.material:material" }
 compose-material-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
